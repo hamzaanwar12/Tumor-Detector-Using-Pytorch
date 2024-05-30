@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{url_for('static',filename='css/output.css')}}" rel="stylesheet">
+    <title>Detect Tumor</title>
+</head>
+<body>
+    <div class="flex justify-end p-20 pr-36 h-[100vh] bg-[url('/static/bg2.jpg')] bg-center bg-cover">
+        <form id="form" action="{{ url_for('detect')}}" method="post" enctype="multipart/form-data">
+            <div class="flex space-x-6  items-center mb-14 ">
+              <div class="shrink-0">
+                <img name="preview_img" id='preview_img' class="w-40 h-40 object-cover" src="https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg" alt="Current profile photo" />
+              </div>
+              
+              <label class="block">
+                <span class="sr-only">Choose photo</span>
+                <input type="file" id="file" name="file" onchange="loadFile(event)" class="block w-full text-sm text-white
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-full file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-violet-50 file:text-violet-700
+                  hover:file:bg-violet-100
+                "/>
+              </label>
+            </div>
+            <div class="flex items-center mb-16  justify-center">
+                <button type="submit" class="flex p-3 text-white bg-blue-500 text-lg border-blue-500 w-48 items-center justify-center  hover:bg-blue-700">
+                    <span>Detect Tumor</span>
+                 </button>
+            </div>
+            <div id="spin" class="flex items-center justify-center" style="display: none;">
+                <svg class="w-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle fill="#F9FFFC" stroke="#F9FFFC" stroke-width="2" r="15" cx="40" cy="100"><animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.4"></animate></circle><circle fill="#F9FFFC" stroke="#F9FFFC" stroke-width="2" r="15" cx="100" cy="100"><animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.2"></animate></circle><circle fill="#F9FFFC" stroke="#F9FFFC" stroke-width="2" r="15" cx="160" cy="100"><animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="0"></animate></circle></svg> 
+            </div>
+            <div class="font-mono text-3xl text-white flex items-center justify-center">
+                <span id="result-h"></span>
+                <span id="result-des"></span>
+            </div>
+           
+          </form>
+    </div>
+
+    <script>
+        var loadFile = function(event) {
+            
+            var input = event.target;
+            var file = input.files[0];
+            var type = file.type;
+
+           var output = document.getElementById('preview_img');
+
+
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = function() {
+                URL.revokeObjectURL(output.src) // free memory
+            }
+        };
+
+        let form = document.getElementById('form')
+        form.addEventListener('submit',async(event)=>{
+
+            event.preventDefault()
+            const tumor = document.getElementById('result-des');
+            const tumorh = document.getElementById('result-h');
+            tumor.innerHTML = ''
+            tumorh.innerHTML = ''
+            document.getElementById('spin').style.display = "flex";
+            setTimeout(() => {
+                upload();
+            }, 3000);
+            
+
+        })
+
+        async function upload(){
+            let data = new FormData();
+            const file = document.getElementById('file').files;
+            data.append('file',file[0]);
+
+            const res = await fetch('/detect', {   // assuming the backend is hosted on the same server
+                method: 'POST',
+                body: data,
+            })
+            const result = await res.json();
+            const tumor = document.getElementById('result-des');
+            const tumorh = document.getElementById('result-h');
+            tumorh.innerHTML = 'Result:'
+            if(result.tumorFound){
+                tumor.innerHTML='Tumor Detected'
+            }
+            else{
+                tumor.innerHTML='No Tumor detected'
+            }
+            
+            console.log(result)
+            document.getElementById('spin').style.display = "none";
+        }
+</script>
+</body>
+</html>
