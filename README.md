@@ -50,7 +50,8 @@ brain-tumor-detection/
     ```
 
 2. Install the required packages:
-   requirements: 
+```
+    requirements: 
      python
      pyTorch(visual) (checkout from their website for others libraries)
      numpy
@@ -59,7 +60,7 @@ brain-tumor-detection/
      matplotlib
      seaborn
      flask
-```sh
+sh
     pip install -r requirements.txt
 ```
 
