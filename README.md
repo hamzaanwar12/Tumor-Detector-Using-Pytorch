@@ -106,3 +106,6 @@ The model's performance is evaluated based on metrics such as accuracy, precisio
 Contributions are welcome.
 
 
+## Preview
+![tumor Web](https://github.com/hamzaanwar12/Tumor-Detector-Using-Pytorch/assets/147822744/64778340-286a-4d63-a22c-586b4934a550)
+
